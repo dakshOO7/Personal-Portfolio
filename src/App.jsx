@@ -8,12 +8,6 @@ import ProjectsTab from "./components/tabs/ProjectsTab";
 import ResumeTab from "./components/tabs/ResumeTab";
 
 
-
-
-
-
-
-
 import { useState } from 'react'
 
 function App() {
@@ -21,7 +15,7 @@ function App() {
 
   // checking whihc tab is active
   const tabClass = (tabName) =>
-    `text-xs uppercase tracking-widest font-bold px-4 py-2 rounded-xl border transition-colors ${
+    ` shrink-0 text-xs uppercase tracking-widest font-bold px-4 py-2 rounded-xl border transition-colors ${
     // checking if the selected tab is active or not
     activeTab === tabName
       ? "text-white bg-sky-500/10 border-sky-500/30"
@@ -33,7 +27,7 @@ function App() {
       <div className="w-full  mx-auto px-8 py-12">
 
         {/* Flex Row: Left Panel + Right Panel */}
-        <div className="flex  gap-8">
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
 
           {/* Left Panel */}
           <LeftPanel />
@@ -46,7 +40,7 @@ function App() {
               tabClass={tabClass}
             />
 
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-8 h-[65vh] overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent hover:scrollbar-thumb-white/20 transition">
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-8 h-[60vh] md:h-[65vh] lg:h-[70vh] overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent hover:scrollbar-thumb-white/20 transition">
 
               {/* Tabs */}
 

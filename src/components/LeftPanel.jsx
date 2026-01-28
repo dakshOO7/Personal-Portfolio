@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function LeftPanel() {
   return (
-          <div className="flex flex-col gap-6 w-80 bg-[#0a0a0a] border border-white/10 rounded-2xl p-6">
+          <div className="flex flex-col gap-6 w-full lg:w-80 shrink-0 bg-[#0a0a0a] border border-white/10 rounded-2xl p-6">
 
             {/* Profile picture (centered) */}
             <div className="flex justify-center">
