@@ -24,7 +24,7 @@ export default function ProjectsTab() {
 
           {/* GitHub link */}
           <a
-            href="https://github.com/dakshOO7/YOUR_PORTFOLIO_REPO"
+            href="https://github.com/dakshOO7/Personal-Portfolio.git"
             target="_blank"
             rel="noreferrer"
             className="shrink-0 w-fit text-xs px-3 py-1 rounded-xl
