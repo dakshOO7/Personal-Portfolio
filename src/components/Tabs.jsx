@@ -1,10 +1,45 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function Tabs({ activeTab, setActiveTab, tabClass }) {
   const scrollerRef = useRef(null);
 
+  // track whether we can scroll left/right (for disabling arrows)
+  const [canLeft, setCanLeft] = useState(false);
+  const [canRight, setCanRight] = useState(false);
+
+  const updateScrollButtons = () => {
+    const el = scrollerRef.current;
+    if (!el) return;
+
+    const maxScrollLeft = el.scrollWidth - el.clientWidth;
+
+    // small tolerance for mobile rounding
+    setCanLeft(el.scrollLeft > 2);
+    setCanRight(el.scrollLeft < maxScrollLeft - 2);
+  };
+
+  useEffect(() => {
+    updateScrollButtons();
+
+    const el = scrollerRef.current;
+    if (el) el.addEventListener("scroll", updateScrollButtons, { passive: true });
+
+    window.addEventListener("resize", updateScrollButtons);
+
+    return () => {
+      if (el) el.removeEventListener("scroll", updateScrollButtons);
+      window.removeEventListener("resize", updateScrollButtons);
+    };
+  }, []);
+
   const scrollByAmount = (amount) => {
-    scrollerRef.current?.scrollBy({ left: amount, behavior: "smooth" });
+    const el = scrollerRef.current;
+    if (!el) return;
+
+    const maxScrollLeft = el.scrollWidth - el.clientWidth;
+    const next = Math.min(Math.max(el.scrollLeft + amount, 0), maxScrollLeft);
+
+    el.scrollTo({ left: next, behavior: "smooth" });
   };
 
   return (
@@ -13,9 +48,11 @@ export default function Tabs({ activeTab, setActiveTab, tabClass }) {
       <button
         type="button"
         onClick={() => scrollByAmount(-180)}
-        className="sm:hidden absolute left-2 top-1/2 -translate-y-1/2 z-10
+        disabled={!canLeft}
+        className={`sm:hidden absolute left-2 top-1/2 -translate-y-1/2 z-10
                    h-7 w-7 rounded-full bg-black/40 border border-white/10
-                   text-slate-200 flex items-center justify-center"
+                   text-slate-200 flex items-center justify-center
+                   ${!canLeft ? "opacity-30 cursor-not-allowed" : "opacity-100"}`}
         aria-label="Scroll tabs left"
       >
         ‹
@@ -24,9 +61,11 @@ export default function Tabs({ activeTab, setActiveTab, tabClass }) {
       <button
         type="button"
         onClick={() => scrollByAmount(180)}
-        className="sm:hidden absolute right-2 top-1/2 -translate-y-1/2 z-10
+        disabled={!canRight}
+        className={`sm:hidden absolute right-2 top-1/2 -translate-y-1/2 z-10
                    h-7 w-7 rounded-full bg-black/40 border border-white/10
-                   text-slate-200 flex items-center justify-center"
+                   text-slate-200 flex items-center justify-center
+                   ${!canRight ? "opacity-30 cursor-not-allowed" : "opacity-100"}`}
         aria-label="Scroll tabs right"
       >
         ›
@@ -35,12 +74,12 @@ export default function Tabs({ activeTab, setActiveTab, tabClass }) {
       {/* scrollable tabs row */}
       <div
         ref={scrollerRef}
-        className="flex gap-2 
-   overflow-x-auto whitespace-nowrap scroll-smooth 
-   sm:overflow-visible sm:justify-evenly sm:w-full
-   bg-white/5 border border-white/10 rounded-2xl p-2
-    px-3 sm:px-2
-    [scrollbar-width:none] [-ms-overflow-style:none]"
+        className="flex gap-2
+                   overflow-x-auto whitespace-nowrap scroll-smooth overscroll-x-none
+                   sm:overflow-visible sm:justify-evenly sm:w-full
+                   bg-white/5 border border-white/10 rounded-2xl p-2
+                   px-3 sm:px-2
+                   [scrollbar-width:none] [-ms-overflow-style:none]"
       >
         {/* Hide scrollbar in WebKit (Chrome/Safari) */}
         <style>{`
@@ -50,21 +89,25 @@ export default function Tabs({ activeTab, setActiveTab, tabClass }) {
         <button onClick={() => setActiveTab("Education")} className={tabClass("Education")}>
           Education
         </button>
+
         <button onClick={() => setActiveTab("Experience")} className={tabClass("Experience")}>
           Experience
         </button>
+
         <button onClick={() => setActiveTab("Skills")} className={tabClass("Skills")}>
           Skills
         </button>
+
         <button onClick={() => setActiveTab("Projects")} className={tabClass("Projects")}>
           Projects
         </button>
+
         <button onClick={() => setActiveTab("Resume")} className={tabClass("Resume")}>
           Resume
         </button>
       </div>
 
-      {/* stronger fade hints */}
+      {/* fade hints */}
       <div className="pointer-events-none absolute left-0 top-0 h-full w-12 rounded-l-2xl bg-gradient-to-r from-[#0a0a0a] to-transparent sm:hidden" />
       <div className="pointer-events-none absolute right-0 top-0 h-full w-12 rounded-r-2xl bg-gradient-to-l from-[#0a0a0a] to-transparent" />
 
